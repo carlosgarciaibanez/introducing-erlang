@@ -22,7 +22,8 @@ falling_speed(#tower{ planemo = Planemo, height = Distance } = T ) ->
 		[T#tower.name, Distance, Planemo, falling_speed(Planemo, Distance), T#tower.location]).
 
 falling_speed(Planemo, Distance) when Distance >= 0 ->
-	P = hd(ets:lookup(planemos, Planemo)),
+	{ atomic, [P | _] } = mnesia:transaction(fun() ->
+		mnesia:read(planemo, Planemo) end),
 	falling_speed_with_gravity(P#planemo.gravity, Distance).
 	
 falling_speed_with_gravity(Gravity, Distance) -> 
