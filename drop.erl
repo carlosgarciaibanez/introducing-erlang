@@ -16,23 +16,10 @@ handle_drops() ->
 			handle_drops()
 	end.
 
-%falling_speed(#tower{} = T) ->
-%	falling_speed(T#tower.planemo, T#tower.height).
-
 falling_speed(#tower{ planemo = Planemo, height = Distance } = T ) ->
 	io:format(
 		"From ~s's elevation of ~p metrers on ~p, the object will reach ~p m/s before crashing in ~s~n", 
 		[T#tower.name, Distance, Planemo, falling_speed(Planemo, Distance), T#tower.location]).
-
-%falling_speed(#tower{planemo=Planemo, height=Distance}) ->
-%	falling_speed(Planemo, Distance).
-
-%falling_speed(earth, Distance) when Distance >= 0 ->
-%	falling_speed_with_gravity(9.8, Distance);
-%falling_speed(moon, Distance) when Distance >= 0 ->
-%	falling_speed_with_gravity(1.6, Distance);
-%falling_speed(mars, Distance) when Distance >= 0 ->
-%	falling_speed_with_gravity(3.71, Distance).
 
 falling_speed(Planemo, Distance) when Distance >= 0 ->
 	P = hd(ets:lookup(planemos, Planemo)),
