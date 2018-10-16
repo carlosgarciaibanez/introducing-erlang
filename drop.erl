@@ -1,6 +1,7 @@
 -module(drop).
--export([drop/0, falling_speed/1, setup/0]).
+-export([drop/0, falling_speed/1, setup/0, get_planemos_bigger_than/1]).
 -include("records.hrl").
+-include_lib("stdlib/include/qlc.hrl").
 
 drop() ->
 	setup(),
@@ -32,6 +33,18 @@ falling_speed_with_gravity(Gravity, Distance) ->
 	catch
 		error:Error -> {error, Error}
 	end.
+
+get_planemos_bigger_than(Planemo) ->
+	{ atomic, [P | _] } = mnesia:transaction(fun() ->
+		mnesia:read(planemo, Planemo) end),
+	{ atomic, Names } = mnesia:transaction(fun() ->
+		qlc:e(
+			qlc:q(
+				[ X#planemo.name || X <- mnesia:table(planemo), X#planemo.diameter > P#planemo.diameter ]
+			) 
+		) 
+	end),
+	Names.
 
 setup() ->
 	mnesia:create_schema([node()]),
